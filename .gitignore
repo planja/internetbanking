@@ -1,0 +1,15 @@
+.idea/
+domain/domain.iml
+domain/target/
+parser/parser.iml
+parser/target/
+rest-service.iml
+rest/rest.iml
+rest/target/
+service/service.iml
+service/target/
+vo/target/
+vo/vo.iml
+testconfig.properties
+target/
+LOG_FILE_IS_UNDEFINED
