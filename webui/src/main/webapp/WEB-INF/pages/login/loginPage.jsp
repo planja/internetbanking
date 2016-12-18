@@ -27,14 +27,22 @@
                                             <label>
                                                 <span>User name</span>
                                                 <input type="text"
-                                                       name="username" required="required"/>
+                                                       name="username" pattern=".{5,}"
+                                                       maxlength="100"
+                                                       required="required"
+                                                       oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                       oninput="setCustomValidity('')"/>
                                             </label>
                                         </div>
                                         <div class="form-row">
                                             <label>
                                                 <span>Password</span>
                                                 <input style="margin-left: 5px" type="password"
-                                                       name="password" required="required"/>
+                                                       name="password" pattern=".{5,}"
+                                                       maxlength="100"
+                                                       required="required"
+                                                       oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                       oninput="setCustomValidity('')"/>
                                             </label>
                                         </div>
                                         <div class="form-row">

@@ -99,7 +99,10 @@
 
                 <input id="internet"
                        data-role="numerictextbox"
-                       data-bind="value:number"/>
+                       data-bind="value:number"
+                       data-format="n0"
+                       data-min="1"
+                       data-max="99999999999999999"/>
                 <br><br>
                 <label for="internet_operator">Internet operator</label>
                 <select id="internet_operator"
@@ -117,7 +120,8 @@
             <br><br>
             <label for="invoice">Invoice</label>
             <select id="invoice"
-                    name="invoice"
+                    required
+                    name="Invoice"
                     data-bind="value:invoiceId"
                     data-value-field="id"
                     data-text-field="text"
@@ -125,6 +129,7 @@
                     data-role="dropdownlist"
                     data-value-primitive="true"
                     data-autobind="true"
+                    data-option-label="Select invoice"
                     ></select>
             <br><br>
             <label for="currency">Money</label>

@@ -1,5 +1,6 @@
 package webui.controller.transfer;
 
+import domain.entity.transfer.Transfer;
 import domain.entity.user.User;
 import infrastructure.service.transfer.ITransferService;
 import infrastructure.service.user.IUserService;
@@ -14,7 +15,9 @@ import webui.viewmodel.payment.PaymentViewModel;
 import webui.viewmodel.transfer.TransferViewModel;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -41,9 +44,15 @@ public class TransferController {
     @ResponseBody
     List<TransferViewModel> getTransfers(Principal principal) {
         User user = userService.findByUserName(principal.getName());
+        List<Transfer> transfers = transferService.findTransfers();
+        List<TransferViewModel> result;
+        List<Transfer> addedTransfers = transfers.stream().filter(transfer -> Objects.equals(transfer.getStatus(), "SUCCESSFUL") && Objects.equals(transfer.getUser().getId(), user.getId())).collect(Collectors.toList());
         if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
                 || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
-            return transferService.findTransfers().stream().map(TransferViewModel::new).collect(Collectors.toList());
+            result = transfers.stream().map(TransferViewModel::new).collect(Collectors.toList());
+            result=result.stream().filter(o->o.getStatus()!=3).collect(Collectors.toList());
+            result.addAll(addedTransfers.stream().map(TransferViewModel::new).collect(Collectors.toList()));
+            return result;
         } else {
             return user.getTransfers().stream().map(TransferViewModel::new).collect(Collectors.toList());
         }

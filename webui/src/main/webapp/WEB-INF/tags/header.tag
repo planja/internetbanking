@@ -46,16 +46,16 @@
             </c:if>
 
             <c:if test="${pageContext.request.userPrincipal.name != null}">
-                <li><a id="payment" href="<c:url value="/payment"/>"><span>Payment</span> </a></li>
+                <li><a id="payment" href="<c:url value="/payment"/>"><span>Payments</span> </a></li>
             </c:if>
 
             <c:if test="${pageContext.request.userPrincipal.name != null}">
-                <li><a id="transfer" href="<c:url value="/transfer"/>"><span>Transfer</span> </a></li>
+                <li><a id="transfer" href="<c:url value="/transfer"/>"><span>Transfers</span> </a></li>
             </c:if>
 
-            <li><a id="services" href="<c:url value="/services"/>"><span>Services</span> </a></li>
+            <!--<li><a id="services" href="<c:url value="/services"/>"><span>Services</span> </a></li>
 
-            <li><a id="about" href="<c:url value="/about"/>"><span>About Us</span> </a></li>
+            <li><a id="about" href="<c:url value="/about"/>"><span>About Us</span> </a></li>-->
             <li><a id="contact" href="<c:url value="/contact"/>"><span>Contact</span> </a></li>
 
 
@@ -73,8 +73,18 @@
             <div class="form">
                 <form action="${pageContext.request.contextPath}/j_spring_security_check" method='POST'
                       class="login-form">
-                    <input type='text' name='username' value='' placeholder="Login">
-                    <input type='password' name='password' placeholder="Password"/>
+                    <input type='text' name='username' value='' placeholder="Login"
+                           pattern=".{5,}"
+                           maxlength="100"
+                           required="required"
+                           oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                           oninput="setCustomValidity('')"/>
+                    <input type='password' name='password' placeholder="Password"
+                           pattern=".{5,}"
+                           maxlength="100"
+                           required="required"
+                           oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                           oninput="setCustomValidity('')"/>
                     <button name="submit" type="submit" value="submit">Login</button>
                     <p class="message">Not registered? <a href="<c:url value="/registration"/>">Create an account</a>
                     </p>

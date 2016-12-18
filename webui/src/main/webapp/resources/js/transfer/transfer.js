@@ -15,19 +15,19 @@ $(document).ready(function () {
         {
             transport: {
                 read: {
-                    url: "/getTransfer",
+                    url: applicationContextPath + "/getTransfer",
                     type: "Get",
                     dataType: "json",
                     contentType: "application/json"
                 },
                 create: {
-                    url: "/createTransfer",
+                    url: applicationContextPath + "/createTransfer",
                     type: "Post",
                     dataType: "json",
                     contentType: "application/json"
                 },
                 update: {
-                    url: "/updateTransfer",
+                    url: applicationContextPath + "/updateTransfer",
                     type: "Put",
                     dataType: "json",
                     contentType: "application/json"
@@ -89,7 +89,7 @@ $(document).ready(function () {
                 for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     var row = sheet.rows[rowIndex];
                     row.cells[3].value = row.cells[3].value + " $";
-                    row.cells[4].value=getValue(row.cells[4].value, paymentStatusDataSource.data());
+                    row.cells[4].value = getValue(row.cells[4].value, paymentStatusDataSource.data());
                 }
             },
             width: 600,
@@ -153,6 +153,14 @@ $(document).ready(function () {
                 }
             },
             edit: function (e) {
+                var remove = null;
+                for (var i = 0; i < invoicesDataSource.data().length; i++) {
+                    if (invoicesDataSource.data()[i].id == -1) {
+                        remove = invoicesDataSource.data()[i];
+                    }
+                }
+                if (remove != null)
+                    invoicesDataSource.remove(remove);
                 e.model.dirty = true;
                 if (e.model.id == null) {
                     $("#for_edit").css("display", "none");
@@ -160,10 +168,28 @@ $(document).ready(function () {
                 } else {
                     $("#for_edit").css("display", "");
                     $("#for_save").css("display", "none");
+                    invoicesDataSource.add({
+                        id: -1,
+                        text: "-1"
+                    });
+                    $("#invoice").data("kendoDropDownList").select(1)
+
                 }
             }
         }
     );
+
+    $("#grid-transfers").kendoTooltip({
+        filter: "td",
+        content: function (e) {
+            var dataItem = $("#grid-transfers").data("kendoGrid").dataItem(e.target.closest("tr"));
+            if (dataItem.cause != null && dataItem.cause != "") {
+                return "Cause: " + dataItem.cause;
+            }
+
+        }
+    }).data("kendoTooltip");
+
 });
 
 function getValue(ids, data) {

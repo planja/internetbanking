@@ -66,7 +66,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/getMobileOperatorsInfo",
                 "/getInternetOperatorsInfo",
                 "/getPaymentStatusInfo",
-                "/getPayments"
+                "/getPayments",
+                "/transfer",
+                "/getTransfer",
+                "/createTransfer"
         ).access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_OPERATOR')");
 
 
@@ -80,7 +83,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ).access("hasRole('ROLE_ADMIN')");
 
         http.authorizeRequests().antMatchers(
-                "/updatePayment"
+                "/updatePayment",
+                "/updateTransfer"
         ).access("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')");
 
         // When the user has logged in as XX.

@@ -56,18 +56,24 @@
         <div id="for_save">
             <label for="bankNumber">Bank number</label>
             <input id="bankNumber" data-role="numerictextbox"
-                   data-min="0"
+                   data-format="n0"
+                   data-min="1"
                    data-max="300000000"
                    data-bind="value: bankNumber"/>
             <br><br>
             <label for="billNumber">Bill number</label>
             <input id="billNumber" data-role="numerictextbox"
-                   data-min="0"
+                   data-format="n0"
+                   data-min="1"
                    data-max="300000000"
                    data-bind="value: billNumber"/>
             <br><br>
             <label for="receiverFullName">Receiver name</label>
-            <input type="text" class="k-input k-textbox" id="receiverFullName" data-bind="value: receiverFullName"/>
+            <input type="text" class="k-input k-textbox" id="receiverFullName"
+                   name="Receiver name"
+                   data-bind="value: receiverFullName"
+                   maxlength="100"
+                   required/>
             <br><br>
             <label for="money">Money</label>
             <input id="money" data-role="numerictextbox"
@@ -78,7 +84,8 @@
             <br><br>
             <label for="invoice">Invoice</label>
             <select id="invoice"
-                    name="invoice"
+                    required
+                    name="Invoice"
                     data-bind="value:invoiceId"
                     data-value-field="id"
                     data-text-field="text"
@@ -86,6 +93,7 @@
                     data-role="dropdownlist"
                     data-value-primitive="true"
                     data-autobind="true"
+                    data-option-label="Select invoice"
                     ></select>
         </div>
 

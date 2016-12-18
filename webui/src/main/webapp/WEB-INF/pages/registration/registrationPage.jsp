@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <head>
 
-
+    <c:url var="post_url"  value="/addUser" />
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <tag:kendo></tag:kendo>
     <link rel="stylesheet" href="<c:url value="/resources/styles/css/registration.css" />">
@@ -22,7 +22,7 @@
                             <div class="main_left_controller">
                                 <div class="main_left_details">
                                     <h1>Registration form</h1>
-                                    <form:form class="form-register" method="post" action="/addUser">
+                                    <form:form class="form-register" method="post" action="${post_url}">
 
                                         <div class="form-register-with-email">
 
@@ -31,21 +31,33 @@
                                                     <label>
                                                         <span>Full name</span>
                                                         <form:input cssStyle="margin-left: 63px" path="name" type="text"
-                                                                    name="name" required="required"/>
+                                                                    name="name" pattern=".{6,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 6 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">
                                                     <label>
                                                         <span>Passport number</span>
                                                         <form:input cssStyle="margin-left: 13px" path="passportNumber"
-                                                                    type="text" name="passportNumber" pattern="MP[0-9]{7}"   required="required"/>
+                                                                    type="text" name="passportNumber"
+                                                                    pattern="MP[0-9]{7}"
+                                                                    oninvalid="setCustomValidity('Enter valid passport number')"
+                                                                    oninput="setCustomValidity('')"
+                                                                    required="required"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">
                                                     <label>
                                                         <span>Issued passport</span>
                                                         <form:input cssStyle="margin-left: 20px" path="issuedPassport"
-                                                                    type="text" name="issuedPassport" required="required"/>
+                                                                    type="text" name="issuedPassport" pattern=".{6,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 6 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
                                                 <div class="div-for-datepicker">
@@ -60,7 +72,11 @@
                                                     <label>
                                                         <span>User name</span>
                                                         <form:input cssStyle="margin-left: 58px" path="userName"
-                                                                    type="text" name="user name" required="required"/>
+                                                                    type="text" name="user name" pattern=".{5,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
 
@@ -77,7 +93,11 @@
                                                         <span>Password</span>
                                                         <form:input cssStyle="margin-left: 64px" path="userPassword"
                                                                     type="password"
-                                                                    name="password" required="required"/>
+                                                                    name="password" pattern=".{5,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
 

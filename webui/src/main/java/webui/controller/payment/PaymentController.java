@@ -1,9 +1,6 @@
 package webui.controller.payment;
 
-import domain.entity.payment.InternetOperator;
-import domain.entity.payment.MobileOperator;
-import domain.entity.payment.PaymentStatus;
-import domain.entity.payment.PaymentType;
+import domain.entity.payment.*;
 import domain.entity.user.User;
 import infrastructure.service.payment.IPaymentService;
 import infrastructure.service.user.IUserService;
@@ -18,8 +15,10 @@ import webui.viewmodel.common.InfoViewModel;
 import webui.viewmodel.payment.PaymentViewModel;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -86,9 +85,15 @@ public class PaymentController {
     @ResponseBody
     List<PaymentViewModel> getPayments(Principal principal) {
         User user = userService.findByUserName(principal.getName());
+        List<Payment> payments = paymentService.findPayments();
+        List<PaymentViewModel> result = new ArrayList<>();
+        List<Payment> addedPayments = payments.stream().filter(payment -> Objects.equals(payment.getPaymentStatus(), "SUCCESSFUL") && Objects.equals(payment.getUser().getId(), user.getId())).collect(Collectors.toList());
         if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
                 || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
-            return paymentService.findPayments().stream().map(PaymentViewModel::new).collect(Collectors.toList());
+            result = payments.stream().map(PaymentViewModel::new).collect(Collectors.toList());
+            result = result.stream().filter(o -> o.getPaymentStatus() != 3).collect(Collectors.toList());
+            result.addAll(addedPayments.stream().map(PaymentViewModel::new).collect(Collectors.toList()));
+            return result;
         } else {
             return user.getPayments().stream().map(PaymentViewModel::new).collect(Collectors.toList());
         }

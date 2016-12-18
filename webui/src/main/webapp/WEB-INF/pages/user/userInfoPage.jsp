@@ -33,7 +33,11 @@
                                                     <label>
                                                         <span>Full name</span>
                                                         <form:input cssStyle="margin-left: 63px" path="name" type="text"
-                                                                    name="name" required="required"/>
+                                                                    name="name" pattern=".{6,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 6 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">
@@ -41,7 +45,9 @@
                                                         <span>Passport number</span>
                                                         <form:input cssStyle="margin-left: 13px" path="passportNumber"
                                                                     type="text" name="passportNumber"
-                                                                    pattern="MP[0-9]{7}" required="required"/>
+                                                                    pattern="MP[0-9]{7}" required="required"
+                                                                    oninvalid="setCustomValidity('Enter valid passport number')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">
@@ -49,7 +55,11 @@
                                                         <span>Issued passport</span>
                                                         <form:input cssStyle="margin-left: 20px" path="issuedPassport"
                                                                     type="text" name="issuedPassport"
-                                                                    required="required"/>
+                                                                    pattern=".{6,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 6 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
                                                 <div class="div-for-datepicker">
@@ -65,7 +75,11 @@
                                                     <label>
                                                         <span>User name</span>
                                                         <form:input cssStyle="margin-left: 58px" path="userName"
-                                                                    type="text" name="user name" required="required"/>
+                                                                    type="text" name="user name" pattern=".{5,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
 
@@ -82,7 +96,11 @@
                                                         <span>Password</span>
                                                         <form:input cssStyle="margin-left: 64px" path="userPassword"
                                                                     type="password"
-                                                                    name="password" required="required"/>
+                                                                    name="password" pattern=".{5,}"
+                                                                    maxlength="100"
+                                                                    required="required"
+                                                                    oninvalid="setCustomValidity('Minimum length is 5 characters')"
+                                                                    oninput="setCustomValidity('')"/>
                                                     </label>
                                                 </div>
 
@@ -136,7 +154,7 @@
                data-format="c"
                data-bind="value: money"
                data-min="0"
-                data-max="30000000"/>
+                data-max="3000000000"/>
     </div>
 </script>
 

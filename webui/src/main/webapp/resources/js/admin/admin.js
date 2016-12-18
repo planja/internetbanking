@@ -63,7 +63,6 @@ $(document).ready(function () {
             width: 600,
             height: 400,
             dataSource: dataSource,
-            groupable: true,
             filterable: true,
             columns: [
                 {
@@ -74,7 +73,7 @@ $(document).ready(function () {
                 {
                     field: "userName",
                     title: "User name",
-                    width: 100
+                    width: 120
                 },
                 {
                     field: "mail",
@@ -89,7 +88,7 @@ $(document).ready(function () {
                 {
                     field: "roles",
                     title: "Roles",
-                    width: "150",
+                    width: 130,
                     template: function (dataItem) {
                         return getRolesNamesById(dataItem.roles, rolesDataSource.data());
                     }
@@ -99,7 +98,7 @@ $(document).ready(function () {
                         {name: "destroy", text: "Delete"},
                         {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}}
                     ],
-                    width: 217
+                    width: 177
                 }
             ],
             editable: {

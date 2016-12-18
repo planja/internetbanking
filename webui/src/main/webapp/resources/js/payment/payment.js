@@ -187,6 +187,15 @@ $(document).ready(function () {
                 }
             },
             edit: function (e) {
+                var remove = null;
+                for (var i = 0; i < invoicesDataSource.data().length; i++) {
+                    if (invoicesDataSource.data()[i].id == -1) {
+                        remove = invoicesDataSource.data()[i];
+                    }
+                }
+                if (remove != null)
+                    invoicesDataSource.remove(remove);
+
                 e.model.dirty = true;
                 if (e.model.id == null) {
                     $("#for_edit").css("display", "none");
@@ -198,22 +207,43 @@ $(document).ready(function () {
                 } else {
                     $("#for_edit").css("display", "");
                     $("#for_save").css("display", "none");
+                    invoicesDataSource.add({
+                        id: -1,
+                        text: "-1"
+                    });
+                    $("#invoice").data("kendoDropDownList").select(1)
                 }
 
 
             }
         }
     );
+
+    $("#grid-payments").kendoTooltip({
+        filter: "td",
+        content: function (e) {
+            var dataItem = $("#grid-payments").data("kendoGrid").dataItem(e.target.closest("tr"));
+            if (dataItem.cause != null && dataItem.cause != "") {
+                return "Cause: " + dataItem.cause;
+            }
+
+        }
+    }).data("kendoTooltip");
+
+
+
 });
 
 function change() {
     var dropDownList = $("#payment_type").data("kendoDropDownList");
     if (dropDownList.selectedIndex == 1) {
+        $("#phone").val('');
         $("#for_internet").css("display", "none");
         $("#for_phone").css("display", "");
     } else {
         $("#for_phone").css("display", "none");
         $("#for_internet").css("display", "");
+        $("#internet").data("kendoNumericTextBox").value("1");
     }
 }
 
