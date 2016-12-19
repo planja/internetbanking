@@ -119,7 +119,6 @@ $(document).ready(function () {
             width: 600,
             height: 400,
             dataSource: dataSource,
-            groupable: true,
             filterable: true,
             columns: [
                 {

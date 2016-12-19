@@ -10,6 +10,7 @@ import infrastructure.repository.ITransferRepository;
 import infrastructure.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -72,6 +73,12 @@ public class TransferService implements ITransferService {
     @Override
     public List<Transfer> findTransfers() {
         return transferRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        transferRepository.deleteTransfer(id);
     }
 }
 

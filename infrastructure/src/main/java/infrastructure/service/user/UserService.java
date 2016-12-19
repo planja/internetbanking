@@ -2,9 +2,9 @@ package infrastructure.service.user;
 
 import domain.entity.user.Role;
 import domain.entity.user.User;
-import infrastructure.repository.IInvoiceRepository;
-import infrastructure.repository.IRoleRepository;
-import infrastructure.repository.IUserRepository;
+import infrastructure.repository.*;
+import infrastructure.service.payment.IPaymentService;
+import infrastructure.service.transfer.ITransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -84,6 +81,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     @Transactional
     public void delete(Long id) {
-        userRepository.delete(id);
+        User user = userRepository.findOne(id);
+        userRepository.delete(user);
     }
 }

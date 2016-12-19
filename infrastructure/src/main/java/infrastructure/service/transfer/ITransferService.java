@@ -17,4 +17,6 @@ public interface ITransferService {
 
     List<Transfer> findTransfers();
 
+    void delete(Long id);
+
 }

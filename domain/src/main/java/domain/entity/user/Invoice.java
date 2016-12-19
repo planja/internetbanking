@@ -1,6 +1,8 @@
 package domain.entity.user;
 
 import domain.entity.payment.Payment;
+import domain.entity.transfer.Transfer;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,8 +28,14 @@ public class Invoice {
     @Column(name = "money")
     private Long money;
 
-    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Set<Payment> payments = new HashSet<>();
+
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private Set<Transfer> transfers = new HashSet<>();
+
 
     public static InvoiceBuilder invoiceBuilder = new InvoiceBuilder();
 
@@ -38,6 +46,20 @@ public class Invoice {
         this.user = user;
         this.money = money;
         this.payments = payments;
+    }
+
+    @PreRemove
+    private void preRemove() {
+        transfers.forEach(o -> o.setInvoice(null));
+        payments.forEach(o -> o.setInvoice(null));
+    }
+
+    public Set<Transfer> getTransfers() {
+        return transfers;
+    }
+
+    public void setTransfers(Set<Transfer> transfers) {
+        this.transfers = transfers;
     }
 
     public Long getId() {

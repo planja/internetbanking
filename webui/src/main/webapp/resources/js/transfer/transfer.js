@@ -15,19 +15,19 @@ $(document).ready(function () {
         {
             transport: {
                 read: {
-                    url: applicationContextPath + "/getTransfer",
+                    url: "/getTransfer",
                     type: "Get",
                     dataType: "json",
                     contentType: "application/json"
                 },
                 create: {
-                    url: applicationContextPath + "/createTransfer",
+                    url: "/createTransfer",
                     type: "Post",
                     dataType: "json",
                     contentType: "application/json"
                 },
                 update: {
-                    url: applicationContextPath + "/updateTransfer",
+                    url: "/updateTransfer",
                     type: "Put",
                     dataType: "json",
                     contentType: "application/json"
@@ -95,7 +95,6 @@ $(document).ready(function () {
             width: 600,
             height: 400,
             dataSource: dataSource,
-            groupable: true,
             filterable: true,
             columns: [
                 {

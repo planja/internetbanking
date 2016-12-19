@@ -16,4 +16,6 @@ public interface IPaymentService {
 
     List<Payment>  findPayments();
 
+    void delete(Long id);
+
 }
