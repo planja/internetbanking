@@ -28,6 +28,9 @@ public class Invoice {
     @Column(name = "money")
     private Long money;
 
+    @Column(name = "can_use")
+    private Boolean canUse;
+
     @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Set<Payment> payments = new HashSet<>();
@@ -90,6 +93,14 @@ public class Invoice {
         return payments;
     }
 
+    public Boolean getCanUse() {
+        return canUse;
+    }
+
+    public void setCanUse(Boolean canUse) {
+        this.canUse = canUse;
+    }
+
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
     }
@@ -98,6 +109,7 @@ public class Invoice {
         private Long id;
         private User user;
         private Long money;
+        private Boolean canUse;
 
         public InvoiceBuilder setId(Long id) {
             this.id = id;
@@ -114,11 +126,17 @@ public class Invoice {
             return this;
         }
 
+        public InvoiceBuilder canUse(Boolean canUse) {
+            this.canUse = canUse;
+            return this;
+        }
+
         public Invoice build() {
             Invoice invoice = new Invoice();
             invoice.setId(this.id);
             invoice.setUser(this.user);
             invoice.setMoney(this.money);
+            invoice.setCanUse(this.canUse);
             return invoice;
         }
     }

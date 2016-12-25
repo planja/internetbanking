@@ -28,6 +28,7 @@ public class InvoiceService implements IInvoiceService {
     @Transactional
     public Invoice update(Invoice invoice) {
         Invoice find = invoiceRepository.findOne(invoice.getId());
+        find.setCanUse(invoice.getCanUse());
         find.setMoney(invoice.getMoney());
         return invoiceRepository.save(find);
     }

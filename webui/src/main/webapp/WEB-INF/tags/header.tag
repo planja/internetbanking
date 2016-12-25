@@ -45,6 +45,10 @@
                 <li><a id="admin" href="<c:url value="/admin"/>"><span>Admin</span> </a></li>
             </c:if>
 
+            <c:if test="${pageContext.request.isUserInRole('OPERATOR')||pageContext.request.isUserInRole('ADMIN')}">
+                <li><a id="invoice" href="<c:url value="/invoice"/>"><span>Invoices</span> </a></li>
+            </c:if>
+
             <c:if test="${pageContext.request.userPrincipal.name != null}">
                 <li><a id="payment" href="<c:url value="/payment"/>"><span>Payments</span> </a></li>
             </c:if>

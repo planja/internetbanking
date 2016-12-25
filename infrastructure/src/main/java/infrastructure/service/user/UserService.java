@@ -70,7 +70,9 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public User findByUserName(String userName) {
-        return userRepository.findByuserName(userName);
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(o -> o.getUserName().equals(userName)).findFirst().get();
+        //return userRepository.findByuserName(userName);
     }
 
     @Override

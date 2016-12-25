@@ -8,27 +8,13 @@ $(document).ready(function () {
         {
             transport: {
                 read: {
-                    url: "/getUserInvoices",
+                    url: "/getUserInvoicesForNonUser",
                     type: "Get",
                     dataType: "json",
                     contentType: "application/json"
                 },
-                destroy: {
-                    url: function (options) {
-                        return "/deleteInvoice/" + options.id;
-                    },
-                    type: "Delete",
-                    dataType: "json",
-                    contentType: "application/json"
-                },
-                create: {
-                    url: "/saveInvoice",
-                    type: "Post",
-                    dataType: "json",
-                    contentType: "application/json"
-                },
                 update: {
-                    url: "/updateInvoice",
+                    url: "/updateInvoiceForNonUser",
                     type: "Put",
                     dataType: "json",
                     contentType: "application/json"
@@ -43,28 +29,21 @@ $(document).ready(function () {
                 }
 
             },
-            requestEnd: function (e) {
+            /*requestEnd: function (e) {
                 var type = e.type;
                 if (type != "read") {
                     $('#grid-invoices').data('kendoGrid').dataSource.read();
                 }
-            },
+            },*/
             schema: {
                 model: {
                     id: "id",
                     fields: {
                         id: {type: "number", editable: false, nullable: false, defaultValue: null},
-                        money: {type: "number", editable: true, nullable: false, defaultValue: 0}
+                        money: {type: "number", editable: true, nullable: false, defaultValue: 0},
+                        canUse: {type: "boolean", editable: true, nullable: false, defaultValue: false}
+
                     }
-                },
-                parse: function (data) {
-                    if (!Array.isArray(data) && data.canUse == false) {
-                        $("body").append("<div class=box>Wait while operator confirm your invoice </div>");
-                        setTimeout(function () {
-                            $('.box').fadeOut('fast')
-                        }, 5000);
-                    }
-                    return data;
                 }
             }
         }
@@ -73,11 +52,10 @@ $(document).ready(function () {
     $("#grid-invoices").kendoGrid(
         {
             width: 200,
-            height: 300,
+            height: 380,
             dataSource: dataSource,
             groupable: false,
             filterable: false,
-            toolbar: [{name: "create", text: "Add invoice"}],
             columns: [
                 {
                     field: "id",
@@ -93,8 +71,13 @@ $(document).ready(function () {
                     width: 70
                 },
                 {
+                    field: "canUse",
+                    title: "Confirmed",
+                    template: "<input type='checkbox' #= (canUse === true) ? checked='checked' : '' # disabled />",
+                    width: 70
+                },
+                {
                     command: [
-                        {name: "destroy", text: "Delete"},
                         {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}}
                     ],
                     width: 100
@@ -110,13 +93,6 @@ $(document).ready(function () {
             },
             edit: function (e) {
                 e.model.dirty = true;
-                if (e.model.id == null) {
-                    $("#for_edit").css("display", "none");
-                    $("#for_save").css("display", "");
-                } else {
-                    $("#for_edit").css("display", "");
-                    $("#for_save").css("display", "none");
-                }
             }
         }
     );

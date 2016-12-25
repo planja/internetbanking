@@ -63,16 +63,16 @@ public class UserController {
     @ResponseBody
     List<InvoiceViewModel> getInvoices(Principal principal) {
         User user = userService.findByUserName(principal.getName());
-        return user.getInvoices().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
+        List<InvoiceViewModel> result = user.getInvoices().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
+        result = result.stream().filter(InvoiceViewModel::getCanUse).collect(Collectors.toList());
+        return result;
 
     }
 
     @RequestMapping(value = "/deleteInvoice/{id}", method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Void> delete(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         invoiceService.delete(id);
-       /* User user = userService.findByUserName(principal.getName());
-        userService.deleteInvoice(id, user);*/
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
