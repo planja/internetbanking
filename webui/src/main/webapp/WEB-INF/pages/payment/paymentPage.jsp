@@ -74,9 +74,10 @@
 
                 <input id="phone"
                        type="text"
-                       name="txtInput"
+                       name="Phone"
                        class="k-input k-textbox"
                        data-bind="value:number"
+                       required
                        onkeydown="javascript:backspacerDOWN(this,event);"
                        onkeyup="javascript:backspacerUP(this,event);"/>
                 <br><br>

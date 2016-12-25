@@ -44,7 +44,7 @@ public class PaymentController {
     @ResponseBody
     List<InfoViewModel> getUserInvoicesInfo(Principal principal) {
         User user = userService.findByUserName(principal.getName());
-        return user.getInvoices().stream().map(o -> new InfoViewModel(String.valueOf(o.getId()), o.getId().intValue())).collect(Collectors.toList());
+        return user.getInvoices().stream().map(o -> new InfoViewModel(String.valueOf(o.getNumber()), o.getId().intValue())).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/getPaymentTypesInfo", method = RequestMethod.GET,

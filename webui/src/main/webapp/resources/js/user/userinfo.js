@@ -54,6 +54,7 @@ $(document).ready(function () {
                     id: "id",
                     fields: {
                         id: {type: "number", editable: false, nullable: false, defaultValue: null},
+                        number: {type: "number", editable: false, nullable: false, defaultValue: null},
                         money: {type: "number", editable: true, nullable: false, defaultValue: 0}
                     }
                 },
@@ -72,7 +73,7 @@ $(document).ready(function () {
 
     $("#grid-invoices").kendoGrid(
         {
-            width: 200,
+            width: 300,
             height: 300,
             dataSource: dataSource,
             groupable: false,
@@ -80,7 +81,7 @@ $(document).ready(function () {
             toolbar: [{name: "create", text: "Add invoice"}],
             columns: [
                 {
-                    field: "id",
+                    field: "number",
                     title: "Number",
                     width: 75
                 },

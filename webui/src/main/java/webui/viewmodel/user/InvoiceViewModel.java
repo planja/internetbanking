@@ -15,6 +15,8 @@ public class InvoiceViewModel {
 
     private Boolean canUse;
 
+    private Long number;
+
     public InvoiceViewModel() {
     }
 
@@ -23,6 +25,7 @@ public class InvoiceViewModel {
         this.money = invoice.getMoney();
         this.userId = invoice.getUser().getId();
         this.canUse = invoice.getCanUse();
+        this.number = invoice.getNumber();
     }
 
     public Invoice toInvoice() {
@@ -30,7 +33,17 @@ public class InvoiceViewModel {
         invoice.setId(this.getId());
         invoice.setMoney(this.getMoney());
         invoice.setCanUse(this.getCanUse() == null ? false : this.getCanUse());
+        invoice.setNumber(this.getNumber());
         return invoice;
+    }
+
+
+    public Long getNumber() {
+        return number;
+    }
+
+    public void setNumber(Long number) {
+        this.number = number;
     }
 
     public Long getId() {

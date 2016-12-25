@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by Никита on 13.11.2016.
  */
@@ -25,6 +27,11 @@ public class InvoiceService implements IInvoiceService {
     private ITransferRepository transferRepository;
 
     @Override
+    public List<Invoice> findAll() {
+        return invoiceRepository.findAll();
+    }
+
+    @Override
     @Transactional
     public Invoice update(Invoice invoice) {
         Invoice find = invoiceRepository.findOne(invoice.getId());
@@ -37,6 +44,9 @@ public class InvoiceService implements IInvoiceService {
     @Transactional
     public Invoice save(Invoice invoice, User user) {
         invoice.setUser(user);
+        List<Invoice> invoices = invoiceRepository.findAll();
+        Long id = invoices.get(invoices.size() - 1).getId() + 1;
+        invoice.setNumber(Long.valueOf("15" + "123321" + id.toString()));
         return invoiceRepository.save(invoice);
     }
 

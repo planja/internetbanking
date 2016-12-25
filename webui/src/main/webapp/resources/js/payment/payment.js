@@ -58,17 +58,17 @@ $(document).ready(function () {
                         operator: {type: "number", editable: true, nullable: false},
                         paymentType: {type: "number", editable: true, nullable: false},
                         number: {
-                            type: "string", editable: true, nullable: false,
-                            validation: {
+                            type: "string", editable: true, nullable: false
+                            /*validation: {
                                 required: true,
                                 numberValidator: function (input) {
-                                    if (input.is("[name='txtInput']") && $("#for_phone").is(':visible')) {
+                                    if (input.is("[id='phone']") && $("#for_phone").is(':visible')) {
                                         input.attr("data-numberValidator-msg", "Enter valid phone number");
                                         return input.val().length == 13;
                                     }
                                     return true;
                                 }
-                            }
+                            }*/
                         },
                         money: {type: "number", editable: true, nullable: false, defaultValue: 1},
                         paymentStatus: {type: "number", editable: true, nullable: false},

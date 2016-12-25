@@ -65,7 +65,7 @@
                                                         <span>Passport ussuing date</span>
                                                         <form:input id="datepicker" path="passportIssuingDate"
                                                                     type="text" name="passportIssuingDate"
-                                                                    pattern="(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d" required="required"/>
+                                                                    pattern="([1-9]|1[012])[/]([1-9]|[12][0-9]|3[01])[/](19|20)\d\d" required="required"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">
@@ -135,6 +135,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#registration").addClass("over");
-        $("#datepicker").kendoDatePicker();
+        $("#datepicker").kendoDatePicker({ max: new Date()});
     });
 </script>
