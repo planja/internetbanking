@@ -51,7 +51,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#invoice").addClass("over");
+        $("#invoices").addClass("over");
     });
 </script>
 

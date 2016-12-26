@@ -46,7 +46,7 @@
             </c:if>
 
             <c:if test="${pageContext.request.isUserInRole('OPERATOR')||pageContext.request.isUserInRole('ADMIN')}">
-                <li><a id="invoice" href="<c:url value="/invoice"/>"><span>Invoices</span> </a></li>
+                <li><a id="invoices" href="<c:url value="/invoice"/>"><span>Invoices</span> </a></li>
             </c:if>
 
             <c:if test="${pageContext.request.userPrincipal.name != null}">
