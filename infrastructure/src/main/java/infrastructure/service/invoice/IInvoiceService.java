@@ -17,4 +17,6 @@ public interface IInvoiceService {
     void delete(Long id);
 
     List<Invoice> findAll();
+
+    void confirmDelete(Long id);
 }

@@ -31,12 +31,21 @@ public class InvoiceService implements IInvoiceService {
         return invoiceRepository.findAll();
     }
 
+    @Transactional
+    @Override
+    public void confirmDelete(Long id) {
+        Invoice find = invoiceRepository.findOne(id);
+        find.setIsDeleted(true);
+        invoiceRepository.save(find);
+    }
+
     @Override
     @Transactional
     public Invoice update(Invoice invoice) {
         Invoice find = invoiceRepository.findOne(invoice.getId());
         find.setCanUse(invoice.getCanUse());
         find.setMoney(invoice.getMoney());
+        find.setCanAddMoney(invoice.getCanAddMoney());
         return invoiceRepository.save(find);
     }
 

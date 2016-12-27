@@ -31,6 +31,12 @@ public class Invoice {
     @Column(name = "can_use")
     private Boolean canUse;
 
+    @Column(name = "can_add_money")
+    private Boolean canAddMoney;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @Column(name = "number")
     private Long number;
 
@@ -58,6 +64,22 @@ public class Invoice {
     private void preRemove() {
         transfers.forEach(o -> o.setInvoice(null));
         payments.forEach(o -> o.setInvoice(null));
+    }
+
+    public Boolean getCanAddMoney() {
+        return canAddMoney;
+    }
+
+    public void setCanAddMoney(Boolean canAddMoney) {
+        this.canAddMoney = canAddMoney;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Set<Transfer> getTransfers() {
@@ -121,6 +143,8 @@ public class Invoice {
         private User user;
         private Long money;
         private Boolean canUse;
+        private Boolean isDeleted;
+        private Boolean canAddMoney;
         private Long number;
 
         public InvoiceBuilder setId(Long id) {
@@ -148,12 +172,24 @@ public class Invoice {
             return this;
         }
 
+        public InvoiceBuilder isDeleted(Boolean isDeleted) {
+            this.isDeleted = isDeleted;
+            return this;
+        }
+
+        public InvoiceBuilder canAddMoney(Boolean canAddMoney) {
+            this.canAddMoney = canAddMoney;
+            return this;
+        }
+
         public Invoice build() {
             Invoice invoice = new Invoice();
             invoice.setId(this.id);
             invoice.setUser(this.user);
             invoice.setMoney(this.money);
             invoice.setCanUse(this.canUse);
+            invoice.setIsDeleted(this.isDeleted);
+            invoice.setCanAddMoney(this.canAddMoney);
             return invoice;
         }
     }

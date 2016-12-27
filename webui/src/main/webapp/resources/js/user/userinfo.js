@@ -35,9 +35,20 @@ $(document).ready(function () {
                 },
                 parameterMap: function (model, operation) {
                     if (operation === "destroy" && model) {
+                        $("body").append("<div class=box>Operator confirm your action and then invoice will be deleted </div>");
+                        setTimeout(function () {
+                            $('.box').fadeOut('fast')
+                        }, 5000);
                         return model.id;
                     }
-                    if (operation === "create" || operation === "update" && model) {
+                    if (operation === "create") {
+                        return kendo.stringify(model);
+                    }
+                    if (operation === "update" && model) {
+                        $("body").append("<div class=box>Wait while operator update your invoice </div>");
+                        setTimeout(function () {
+                            $('.box').fadeOut('fast')
+                        }, 5000);
                         return kendo.stringify(model);
                     }
                 }
@@ -55,6 +66,8 @@ $(document).ready(function () {
                     fields: {
                         id: {type: "number", editable: false, nullable: false, defaultValue: null},
                         number: {type: "number", editable: false, nullable: false, defaultValue: null},
+                        canAddMoney: {type: "boolean", editable: true, nullable: false, defaultValue: true},
+                        isDeleted: {type: "boolean", editable: true, nullable: false, defaultValue: false},
                         money: {type: "number", editable: true, nullable: false, defaultValue: 0}
                     }
                 },
@@ -89,7 +102,10 @@ $(document).ready(function () {
                     field: "money",
                     title: "Money",
                     template: function (dataItem) {
-                        return "$" + dataItem.money;
+                        if (!dataItem.canAddMoney)
+                            return "Not confirmed";
+                        else
+                            return "$" + dataItem.money;
                     },
                     width: 70
                 },
@@ -108,6 +124,22 @@ $(document).ready(function () {
                 window: {
                     title: "Invoice"
                 }
+            },
+            dataBound: function () {
+                var grid = this;
+                var model;
+                grid.tbody.find("tr[role='row']").each(function () {
+                    $(this).find(".k-grid-delete").show();
+                    $(this).find(".k-grid-edit").show();
+                });
+
+                grid.tbody.find("tr[role='row']").each(function () {
+                    model = grid.dataItem(this);
+                    if (!model.canAddMoney) {
+                        $(this).find(".k-grid-delete").hide();
+                        $(this).find(".k-grid-edit").hide();
+                    }
+                });
             },
             edit: function (e) {
                 e.model.dirty = true;

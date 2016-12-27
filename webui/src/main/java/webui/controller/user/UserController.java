@@ -1,5 +1,6 @@
 package webui.controller.user;
 
+import domain.entity.user.Invoice;
 import domain.entity.user.RoleType;
 import domain.entity.user.User;
 import infrastructure.service.invoice.IInvoiceService;
@@ -64,7 +65,7 @@ public class UserController {
     List<InvoiceViewModel> getInvoices(Principal principal) {
         User user = userService.findByUserName(principal.getName());
         List<InvoiceViewModel> result = user.getInvoices().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
-        result = result.stream().filter(InvoiceViewModel::getCanUse).collect(Collectors.toList());
+        result = result.stream().filter(o -> o.getCanUse() && !o.getIsDeleted()).collect(Collectors.toList());
         return result;
 
     }
@@ -72,7 +73,7 @@ public class UserController {
     @RequestMapping(value = "/deleteInvoice/{id}", method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        invoiceService.delete(id);
+        invoiceService.confirmDelete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -84,8 +85,9 @@ public class UserController {
     public
     @ResponseBody
     InvoiceViewModel update(@RequestBody InvoiceViewModel invoiceViewModel) {
-        return new InvoiceViewModel(invoiceService.update(invoiceViewModel.toInvoice()));
-
+        Invoice invoice = invoiceViewModel.toInvoice();
+        invoice.setCanAddMoney(false);
+        return new InvoiceViewModel(invoiceService.update(invoice));
     }
 
     @RequestMapping(value = "/saveInvoice",

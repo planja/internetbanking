@@ -17,6 +17,10 @@ public class InvoiceViewModel {
 
     private Long number;
 
+    private Boolean canAddMoney;
+
+    private Boolean isDeleted;
+
     public InvoiceViewModel() {
     }
 
@@ -26,6 +30,8 @@ public class InvoiceViewModel {
         this.userId = invoice.getUser().getId();
         this.canUse = invoice.getCanUse();
         this.number = invoice.getNumber();
+        this.isDeleted = invoice.getIsDeleted();
+        this.canAddMoney = invoice.getCanAddMoney();
     }
 
     public Invoice toInvoice() {
@@ -34,9 +40,26 @@ public class InvoiceViewModel {
         invoice.setMoney(this.getMoney());
         invoice.setCanUse(this.getCanUse() == null ? false : this.getCanUse());
         invoice.setNumber(this.getNumber());
+        invoice.setCanAddMoney(this.getCanAddMoney() == null ? false : this.getCanAddMoney());
+        invoice.setIsDeleted(this.getIsDeleted() == null ? false : this.getIsDeleted());
         return invoice;
     }
 
+    public Boolean getCanAddMoney() {
+        return canAddMoney;
+    }
+
+    public void setCanAddMoney(Boolean canAddMoney) {
+        this.canAddMoney = canAddMoney;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 
     public Long getNumber() {
         return number;

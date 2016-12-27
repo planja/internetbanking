@@ -1,16 +1,16 @@
 package webui.controller.invoice;
 
+import domain.entity.user.Invoice;
 import domain.entity.user.User;
 import infrastructure.service.invoice.IInvoiceService;
 import infrastructure.service.user.IUserService;
 import infrastructure.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import webui.viewmodel.user.InvoiceViewModel;
 
 import java.security.Principal;
@@ -36,9 +36,9 @@ public class InvoiceController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    List<InvoiceViewModel> getInvoices(Principal principal) {
+    List<InvoiceViewModel> getInvoices() {
         List<InvoiceViewModel> result = invoiceService.findAll().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
-        result = result.stream().filter(o -> !o.getCanUse()).collect(Collectors.toList());
+        result = result.stream().filter(o -> !o.getCanUse() || o.getIsDeleted() || !o.getCanAddMoney()).collect(Collectors.toList());
         return result;
     }
 
@@ -50,8 +50,16 @@ public class InvoiceController {
     public
     @ResponseBody
     InvoiceViewModel update(@RequestBody InvoiceViewModel invoiceViewModel) {
-        return new InvoiceViewModel(invoiceService.update(invoiceViewModel.toInvoice()));
+        Invoice invoice = invoiceViewModel.toInvoice();
+        return new InvoiceViewModel(invoiceService.update(invoice));
 
+    }
+
+    @RequestMapping(value = "/deleteInvoiceForNonUser/{id}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        invoiceService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

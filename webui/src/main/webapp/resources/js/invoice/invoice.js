@@ -19,30 +19,50 @@ $(document).ready(function () {
                     dataType: "json",
                     contentType: "application/json"
                 },
+                destroy: {
+                    url: function (options) {
+                        return "/deleteInvoiceForNonUser/" + options.id;
+                    },
+                    type: "Delete",
+                    dataType: "json",
+                    contentType: "application/json"
+                },
                 parameterMap: function (model, operation) {
                     if (operation === "destroy" && model) {
                         return model.id;
                     }
-                    if (operation === "create" || operation === "update" && model) {
+                    if (operation === "update" && model) {
+                        if ($("#update_money").css("display") == "none") {
+                            model.canUse = true;
+                        }else{
+                            model.canAddMoney = true;
+                        }
                         return kendo.stringify(model);
                     }
                 }
 
             },
-            /*requestEnd: function (e) {
+            requestEnd: function (e) {
                 var type = e.type;
                 if (type != "read") {
                     $('#grid-invoices').data('kendoGrid').dataSource.read();
                 }
-            },*/
+            },
+            /*requestEnd: function (e) {
+             var type = e.type;
+             if (type != "read") {
+             $('#grid-invoices').data('kendoGrid').dataSource.read();
+             }
+             },*/
             schema: {
                 model: {
                     id: "id",
                     fields: {
                         id: {type: "number", editable: false, nullable: false, defaultValue: null},
                         money: {type: "number", editable: true, nullable: false, defaultValue: 0},
-                        canUse: {type: "boolean", editable: true, nullable: false, defaultValue: false}
-
+                        canUse: {type: "boolean", editable: true, nullable: false, defaultValue: false},
+                        canAddMoney: {type: "boolean", editable: true, nullable: false, defaultValue: true},
+                        isDeleted: {type: "boolean", editable: true, nullable: false, defaultValue: true}
                     }
                 }
             }
@@ -58,7 +78,7 @@ $(document).ready(function () {
             filterable: false,
             columns: [
                 {
-                    field: "id",
+                    field: "number",
                     title: "Number",
                     width: 75
                 },
@@ -78,11 +98,30 @@ $(document).ready(function () {
                 },
                 {
                     command: [
+                        {name: "destroy", text: "Delete"},
                         {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}}
                     ],
                     width: 100
                 }
             ],
+            dataBound: function () {
+                var grid = this;
+                var model;
+                grid.tbody.find("tr[role='row']").each(function () {
+                    $(this).find(".k-grid-delete").hide();
+                    $(this).find(".k-grid-edit").hide();
+                });
+
+                grid.tbody.find("tr[role='row']").each(function () {
+                    model = grid.dataItem(this);
+                    if(model.isDeleted){
+                        $(this).find(".k-grid-delete").show();
+                    }
+                    if(!model.canUse||!model.canAddMoney){
+                        $(this).find(".k-grid-edit").show();
+                    }
+                });
+            },
             editable: {
                 confirmation: true,
                 mode: "popup",
@@ -93,6 +132,13 @@ $(document).ready(function () {
             },
             edit: function (e) {
                 e.model.dirty = true;
+                if (!e.model.canAddMoney) {
+                    $("#confirmed").css("display", "none");
+                    $("#update_money").css("display", "");
+                } else {
+                    $("#confirmed").css("display", "");
+                    $("#update_money").css("display", "none");
+                }
             }
         }
     );

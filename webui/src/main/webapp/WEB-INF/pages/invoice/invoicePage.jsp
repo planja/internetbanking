@@ -37,15 +37,14 @@
 
 <script id="popup_editor" type="text/x-kendo-template">
     <div id="popup_editor_content" class="popup-editor-container">
-        <label for="currency">Money</label>
-        <input id="currency" data-role="numerictextbox"
-               data-format="c"
-               data-bind="value: money"
-               data-min="0"
-               data-max="3000000000"/>
-        <br><br>
-        <label for="can_use">Confirmed</label>
-        <input id="can_use" type="checkbox" class="k-input" name="antiPassBack" data-bind="checked: canUse">
+        <div id="confirmed">
+            <label for="can_use">Confirmed</label>
+            <input id="can_use" type="checkbox" class="k-input" name="antiPassBack" data-bind="checked: canUse">
+        </div>
+        <div id="update_money">
+            Update money?
+        </div>
+
     </div>
 </script>
 
