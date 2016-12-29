@@ -75,6 +75,29 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
+    @Transactional
+    public User updateUserByAdmin(User user) {
+        roleRepository.deleteRolesByUserId(user.getId());
+        User find = userRepository.findOne(user.getId());
+        find.setUserName(user.getUserName());
+        find.setUserPassword(user.getUserPassword());
+        find.setName(user.getName());
+        find.setMail(user.getMail());
+        find.setPassportNumber(user.getPassportNumber());
+        find.setIssuedPassport(user.getIssuedPassport());
+        find.setRoles(user.getRoles());
+        find.getRoles().forEach(o -> o.setUser(find));
+        return userRepository.save(find);
+    }
+
+    @Override
+    @Transactional
+    public User saveUserByAdmin(User user) {
+        user.getRoles().forEach(o -> o.setUser(user));
+        return userRepository.save(user);
+    }
+
+    @Override
     public User findByUserName(String userName) {
         List<User> users = userRepository.findAll();
         return users.stream().filter(o -> o.getUserName().equals(userName)).findFirst().get();

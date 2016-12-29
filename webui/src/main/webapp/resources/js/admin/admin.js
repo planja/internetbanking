@@ -5,6 +5,7 @@
 var rolesDataSource = dsRoles.getRolesTypeDataSource();
 
 $(document).ready(function () {
+
     rolesDataSource.read();
 
     var dataSource = new kendo.data.DataSource(
@@ -21,6 +22,12 @@ $(document).ready(function () {
                         return "/deleteUser/" + options.id;
                     },
                     type: "Delete",
+                    dataType: "json",
+                    contentType: "application/json"
+                },
+                create: {
+                    url: "/saveUserByAdmin",
+                    type: "Post",
                     dataType: "json",
                     contentType: "application/json"
                 },
@@ -44,12 +51,29 @@ $(document).ready(function () {
                     id: "id",
                     fields: {
                         id: {type: "number", editable: false, nullable: false, defaultValue: null},
-                        userName: {type: "string", editable: true, nullable: false},
+                        userName: {type: "string", editable: true, nullable: false,
+                        validation: {
+                            required: true,
+                            userNameValidator: function (input) {
+                                if (input.is("[id='user_name']")) {
+                                    var items = dataSource.data();
+
+                                    input.attr("data-userNameValidator-msg", "User with current user name exist");
+                                    var exists = $.grep(items, function (item) {
+                                        return item.userName == input.val();
+                                    });
+                                    if (exists != null && exists.length > 1)
+                                        return false;
+                                }
+                                return true;
+                            }
+                        }},
                         userPassword: {type: "string", editable: true, nullable: false},
                         name: {type: "string", editable: true, nullable: false},
                         mail: {type: "string", editable: true, nullable: false},
                         passportNumber: {type: "string", editable: true, nullable: false},
                         issuedPassport: {type: "string", editable: true, nullable: false},
+                        passportIssuingDate: {type: "datetime", defaultValue: new Date()},
                         roles: [{type: "number", editable: true, nullable: true, defaultValue: null}]
                     }
                 }
@@ -60,6 +84,7 @@ $(document).ready(function () {
 
     $("#grid-users").kendoGrid(
         {
+            toolbar: [{name: "create", text: "Add user"}],
             width: 600,
             height: 400,
             dataSource: dataSource,
@@ -106,7 +131,7 @@ $(document).ready(function () {
                 mode: "popup",
                 template: kendo.template($("#popup_editor").html()),
                 window: {
-                    title: "User roles"
+                    title: "User"
                 }
             },
             edit: function (e) {

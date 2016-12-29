@@ -6,7 +6,7 @@
 <div id="main_top_panel">
     <div class="main_top_controller">
         <div id="main_logo_panel">
-            <div class="/logout"><a href="index.html"><img src="/resources/images/logo.gif" alt="" border="0"/></a>
+            <div class="/logout"><a href="<c:url value="/welcome"/>"><img src="/resources/images/logo.gif" alt="" border="0"/></a>
             </div>
         </div>
     </div>

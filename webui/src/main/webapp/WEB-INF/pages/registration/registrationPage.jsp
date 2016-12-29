@@ -43,9 +43,10 @@
                                                         <span>Passport number</span>
                                                         <form:input cssStyle="margin-left: 13px" path="passportNumber"
                                                                     type="text" name="passportNumber"
-                                                                    pattern="MP[0-9]{7}"
+                                                                    pattern="[A-Z]{2}[0-9]{7}"
                                                                     oninvalid="setCustomValidity('Enter valid passport number')"
                                                                     oninput="setCustomValidity('')"
+                                                                    maxlength="9"
                                                                     required="required"/>
                                                     </label>
                                                 </div>
@@ -58,14 +59,6 @@
                                                                     required="required"
                                                                     oninvalid="setCustomValidity('Minimum length is 6 characters')"
                                                                     oninput="setCustomValidity('')"/>
-                                                    </label>
-                                                </div>
-                                                <div class="div-for-datepicker">
-                                                    <label>
-                                                        <span>Passport ussuing date</span>
-                                                        <form:input id="datepicker" path="passportIssuingDate"
-                                                                    type="text" name="passportIssuingDate"
-                                                                    pattern="([1-9]|1[012])[/]([1-9]|[12][0-9]|3[01])[/](19|20)\d\d" required="required"/>
                                                     </label>
                                                 </div>
                                                 <div class="form-row">

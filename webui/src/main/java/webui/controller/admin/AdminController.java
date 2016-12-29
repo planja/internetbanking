@@ -2,6 +2,7 @@ package webui.controller.admin;
 
 import domain.entity.user.Role;
 import domain.entity.user.RoleType;
+import domain.entity.user.User;
 import infrastructure.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import webui.viewmodel.user.UserViewModel;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,19 @@ public class AdminController {
         return userService.findAll().stream().map(UserViewModel::new).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/saveUserByAdmin", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    UserViewModel saveUser(@RequestBody UserViewModel userViewModel) {
+        List<Role> roles = userViewModel.getRoles().stream().map(o -> new Role(null, Arrays.stream(RoleType.values())
+                .filter(r -> r.getValue() == o).findFirst().get().getText())).collect(Collectors.toList());
+        User user = userViewModel.toUser();
+        user.setRoles(new HashSet<>(roles));
+        return new UserViewModel(userService.saveUserByAdmin(user));
+    }
+
     @RequestMapping(value = "/updateRoles", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -49,7 +64,9 @@ public class AdminController {
     UserViewModel updateUser(@RequestBody UserViewModel userViewModel) {
         List<Role> roles = userViewModel.getRoles().stream().map(o -> new Role(null, Arrays.stream(RoleType.values())
                 .filter(r -> r.getValue() == o).findFirst().get().getText())).collect(Collectors.toList());
-        return new UserViewModel(userService.updateRoles(roles, userViewModel.getId()));
+        User user = userViewModel.toUser();
+        user.setRoles(new HashSet<>(roles));
+        return new UserViewModel(userService.updateUserByAdmin(user));
     }
 
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.DELETE,

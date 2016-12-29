@@ -24,4 +24,8 @@ public interface IUserService {
 
     User updateRoles(List<Role> roles, Long userId);
 
+    User saveUserByAdmin(User user);
+
+    User updateUserByAdmin(User user);
+
 }
