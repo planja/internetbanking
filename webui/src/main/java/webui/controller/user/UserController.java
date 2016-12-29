@@ -65,7 +65,6 @@ public class UserController {
     List<InvoiceViewModel> getInvoices(Principal principal) {
         User user = userService.findByUserName(principal.getName());
         List<InvoiceViewModel> result = user.getInvoices().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
-        result = result.stream().filter(o -> o.getCanUse() && !o.getIsDeleted()).collect(Collectors.toList());
         return result;
 
     }

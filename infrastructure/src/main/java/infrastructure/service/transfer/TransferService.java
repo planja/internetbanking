@@ -51,7 +51,7 @@ public class TransferService implements ITransferService {
             find.setStatus("QUEUE");
         } else if (transfer.getStatus().equals("SUCCESSFUL")) {
             if (transfer.getBankNumber().equals(123321)) {
-                Invoice billInvoice = invoiceRepository.findOne((long) transfer.getBillNumber());
+                Invoice billInvoice = invoiceRepository.findBynumber((long) transfer.getBillNumber());
                 if (billInvoice != null) {
                     billInvoice.setMoney(billInvoice.getMoney() + transfer.getMoney());
                     invoiceRepository.save(billInvoice);

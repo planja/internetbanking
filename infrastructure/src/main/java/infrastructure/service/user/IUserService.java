@@ -10,6 +10,8 @@ import java.util.List;
  */
 public interface IUserService {
 
+    User findById(Long id);
+
     void saveUser(User user) throws Exception;
 
     User findByUserName(String name);

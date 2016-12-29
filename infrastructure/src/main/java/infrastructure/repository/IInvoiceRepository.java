@@ -15,4 +15,6 @@ public interface IInvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("DELETE FROM Invoice i WHERE i.id = :id")
     void deleteInvoice(@Param("id") Long id);
 
+    Invoice findBynumber(Long number);
+
 }

@@ -30,6 +30,12 @@ public class UserService implements UserDetailsService, IUserService {
     private IRoleRepository roleRepository;
 
     @Override
+    @Transactional
+    public User findById(Long id) {
+        return userRepository.findOne(id);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = userRepository.findByuserName(name);
         if (user == null) {

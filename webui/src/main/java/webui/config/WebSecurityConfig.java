@@ -84,7 +84,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers(
                 "/updatePayment",
-                "/updateTransfer"
+                "/updateTransfer",
+                "/invoice",
+                "/getUserInvoicesForNonUser",
+                "/updateInvoiceForNonUser",
+                "/deleteInvoiceForNonUser/**"
         ).access("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')");
 
         // When the user has logged in as XX.

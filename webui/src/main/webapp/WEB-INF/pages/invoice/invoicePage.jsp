@@ -4,6 +4,7 @@
 <head>
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <tag:kendo></tag:kendo>
+    <script src="<c:url value="/resources/js/user/datasource.users.js" />"></script>
     <script src="<c:url value="/resources/js/invoice/invoice.js" />"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <title>Invoices</title>
@@ -37,13 +38,29 @@
 
 <script id="popup_editor" type="text/x-kendo-template">
     <div id="popup_editor_content" class="popup-editor-container">
-        <div id="confirmed">
-            <label for="can_use">Confirmed</label>
-            <input id="can_use" type="checkbox" class="k-input" name="antiPassBack" data-bind="checked: canUse">
-        </div>
-        <div id="update_money">
-            Update money?
-        </div>
+        <label for="user_id">User</label>
+        <select id="user_id"
+                name="User"
+                data-bind="value:userId"
+                data-value-field="id"
+                data-text-field="text"
+                data-source="usersDataSource"
+                data-role="dropdownlist"
+                data-value-primitive="true"
+                data-autobind="true"
+                data-change="change"
+                required
+                data-option-label="Select user"
+                ></select>
+        <br><br>
+
+        <label for="currency">Money</label>
+        <input id="currency" data-role="numerictextbox"
+               data-format="c"
+               data-min="0"
+               data-max="300000"
+               data-bind="value: money"/>
+
 
     </div>
 </script>

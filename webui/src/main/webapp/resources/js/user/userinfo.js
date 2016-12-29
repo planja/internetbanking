@@ -32,25 +32,6 @@ $(document).ready(function () {
                     type: "Put",
                     dataType: "json",
                     contentType: "application/json"
-                },
-                parameterMap: function (model, operation) {
-                    if (operation === "destroy" && model) {
-                        $("body").append("<div class=box>Operator confirm your action and then invoice will be deleted </div>");
-                        setTimeout(function () {
-                            $('.box').fadeOut('fast')
-                        }, 5000);
-                        return model.id;
-                    }
-                    if (operation === "create") {
-                        return kendo.stringify(model);
-                    }
-                    if (operation === "update" && model) {
-                        $("body").append("<div class=box>Wait while operator update your invoice </div>");
-                        setTimeout(function () {
-                            $('.box').fadeOut('fast')
-                        }, 5000);
-                        return kendo.stringify(model);
-                    }
                 }
 
             },
@@ -70,15 +51,6 @@ $(document).ready(function () {
                         isDeleted: {type: "boolean", editable: true, nullable: false, defaultValue: false},
                         money: {type: "number", editable: true, nullable: false, defaultValue: 0}
                     }
-                },
-                parse: function (data) {
-                    if (!Array.isArray(data) && data.canUse == false) {
-                        $("body").append("<div class=box>Wait while operator confirm your invoice </div>");
-                        setTimeout(function () {
-                            $('.box').fadeOut('fast')
-                        }, 5000);
-                    }
-                    return data;
                 }
             }
         }
@@ -91,7 +63,6 @@ $(document).ready(function () {
             dataSource: dataSource,
             groupable: false,
             filterable: false,
-            toolbar: [{name: "create", text: "Add invoice"}],
             columns: [
                 {
                     field: "number",
@@ -102,19 +73,9 @@ $(document).ready(function () {
                     field: "money",
                     title: "Money",
                     template: function (dataItem) {
-                        if (!dataItem.canAddMoney)
-                            return "Not confirmed";
-                        else
-                            return "$" + dataItem.money;
+                        return "$" + dataItem.money;
                     },
                     width: 70
-                },
-                {
-                    command: [
-                        {name: "destroy", text: "Delete"},
-                        {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}}
-                    ],
-                    width: 100
                 }
             ],
             editable: {

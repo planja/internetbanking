@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import webui.viewmodel.common.InfoViewModel;
 import webui.viewmodel.user.InvoiceViewModel;
 
 import java.security.Principal;
@@ -26,10 +27,21 @@ public class InvoiceController {
     @Autowired
     private IInvoiceService invoiceService;
 
+    @Autowired
+    private IUserService userService;
+
 
     @RequestMapping(value = {"/invoice"}, method = RequestMethod.GET)
     public String payments() {
         return "invoice/invoicePage";
+    }
+
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    List<InfoViewModel> getUserInfo() {
+        return userService.findAll().stream().map(o->new InfoViewModel(o.getUserName(),o.getId().intValue())).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/getUserInvoicesForNonUser", method = RequestMethod.GET,
@@ -37,9 +49,7 @@ public class InvoiceController {
     public
     @ResponseBody
     List<InvoiceViewModel> getInvoices() {
-        List<InvoiceViewModel> result = invoiceService.findAll().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
-        result = result.stream().filter(o -> !o.getCanUse() || o.getIsDeleted() || !o.getCanAddMoney()).collect(Collectors.toList());
-        return result;
+        return invoiceService.findAll().stream().map(InvoiceViewModel::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/updateInvoiceForNonUser",
@@ -52,6 +62,20 @@ public class InvoiceController {
     InvoiceViewModel update(@RequestBody InvoiceViewModel invoiceViewModel) {
         Invoice invoice = invoiceViewModel.toInvoice();
         return new InvoiceViewModel(invoiceService.update(invoice));
+
+    }
+
+    @RequestMapping(value = "/createInvoiceForNonUser",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public
+    @ResponseBody
+    InvoiceViewModel save(@RequestBody InvoiceViewModel invoiceViewModel) {
+        User user = userService.findById(invoiceViewModel.getUserId());
+        Invoice invoice = invoiceViewModel.toInvoice();
+        return new InvoiceViewModel(invoiceService.save(invoice, user));
 
     }
 
