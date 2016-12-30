@@ -45,7 +45,6 @@ public class PaymentController {
     List<InfoViewModel> getUserInvoicesInfo(Principal principal) {
         User user = userService.findByUserName(principal.getName());
         return user.getInvoices()
-                .stream().filter(o -> o.getCanUse() && o.getCanAddMoney() && !o.getIsDeleted()).collect(Collectors.toList())
                 .stream().map(o -> new InfoViewModel(String.valueOf(o.getNumber()), o.getId().intValue())).collect(Collectors.toList());
     }
 
