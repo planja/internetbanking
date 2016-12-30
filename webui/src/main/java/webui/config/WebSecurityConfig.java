@@ -79,7 +79,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/getRolesInfo",
                 "/findAllUser",
                 "/deleteUser/**",
-                "/updateRoles"
+                "/updateRoles",
+                "/saveUserByAdmin",
+                "/services",
+                "/getServices",
+                "/saveService",
+                "/updateService",
+                "/deleteService/**"
         ).access("hasRole('ROLE_ADMIN')");
 
         http.authorizeRequests().antMatchers(

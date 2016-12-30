@@ -25,11 +25,6 @@ public class HomeController {
         return "login/loginPage";
     }
 
-    @RequestMapping(value = "/services", method = RequestMethod.GET)
-     public String services() {
-        return "common/servicesPage";
-    }
-
     @RequestMapping(value = "/about", method = RequestMethod.GET)
      public String about() {
         return "common/aboutPage";

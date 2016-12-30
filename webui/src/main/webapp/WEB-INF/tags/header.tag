@@ -56,11 +56,11 @@
             <c:if test="${pageContext.request.userPrincipal.name != null}">
                 <li><a id="transfer" href="<c:url value="/transfer"/>"><span>Transfers</span> </a></li>
             </c:if>
-
-            <!--<li><a id="services" href="<c:url value="/services"/>"><span>Services</span> </a></li>
-
-            <li><a id="about" href="<c:url value="/about"/>"><span>About Us</span> </a></li>-->
             <li><a id="contact" href="<c:url value="/contact"/>"><span>Contact</span> </a></li>
+
+            <c:if test="${pageContext.request.isUserInRole('ADMIN')}">
+                <li><a id="services" href="<c:url value="/services"/>"><span>Services</span> </a></li>
+            </c:if>
 
 
         </ul>

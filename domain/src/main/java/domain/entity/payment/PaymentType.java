@@ -4,8 +4,8 @@ package domain.entity.payment;
  * Created by admin on 21.11.2016.
  */
 public enum PaymentType {
-    MOBILE(0, "MOBILE"),
-    INTERNET(1, "INTERNET");
+    MOBILE(1, "MOBILE"),
+    INTERNET(2, "INTERNET");
 
     private final int value;
     private final String text;
