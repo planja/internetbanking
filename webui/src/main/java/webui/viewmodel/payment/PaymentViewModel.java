@@ -2,10 +2,12 @@ package webui.viewmodel.payment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import domain.entity.payment.*;
+import domain.entity.services.Service;
 import domain.entity.user.Invoice;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -28,34 +30,54 @@ public class PaymentViewModel {
 
     private String cause;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date created;
 
     private Long invoiceId;
 
-    public PaymentViewModel(Payment payment) {
+    private Long userId;
+
+    public PaymentViewModel(Payment payment, List<Service> serviceList) {
         this.id = payment.getId();
-        this.operator = payment.getPaymentType().equals(PaymentType.INTERNET.getText())
-                ? Arrays.stream(InternetOperator.values()).filter(o -> o.getText().equals(payment.getOperator())).findFirst().get().getValue()
-                : Arrays.stream(MobileOperator.values()).filter(o -> o.getText().equals(payment.getOperator())).findFirst().get().getValue();
-        this.paymentType = Arrays.stream(PaymentType.values()).filter(o -> o.getText().equals(payment.getPaymentType())).findFirst().get().getValue();
+        switch (payment.getPaymentType()) {
+            case "MOBILE":
+                this.operator = Arrays.stream(MobileOperator.values()).filter(o -> o.getText().equals(payment.getOperator())).findFirst().get().getValue();
+                break;
+            case "INTERNET":
+                this.operator = Arrays.stream(InternetOperator.values()).filter(o -> o.getText().equals(payment.getOperator())).findFirst().get().getValue();
+                break;
+            default:
+                this.operator = MobileOperator.LIFE.getValue();
+                break;
+        }
+        this.paymentType = serviceList.stream().filter(o -> o.getName().equals(payment.getPaymentType())).findFirst().get().getId().intValue();
         this.number = payment.getNumber();
         this.money = payment.getMoney();
         this.paymentStatus = Arrays.stream(PaymentStatus.values()).filter(o -> o.getText().equals(payment.getPaymentStatus())).findFirst().get().getValue();
         this.cause = payment.getCause();
         this.created = payment.getCreated();
         this.invoiceId = payment.getInvoice().getId();
+        this.userId = payment.getUser() != null ? payment.getUser().getId() : null;
     }
 
-    public Payment toPayment() {
+    public Payment toPayment(List<Service> services) {
         Payment payment = new Payment();
         payment.setId(this.id);
-        payment.setOperator(this.paymentType == 0 ? Arrays.stream(MobileOperator.values()).filter(o -> o.getValue() == this.operator).findFirst().get().getText()
-                : Arrays.stream(InternetOperator.values()).filter(o -> o.getValue() == this.operator).findFirst().get().getText());
-        payment.setPaymentType(Arrays.stream(PaymentType.values()).filter(o -> o.getValue() == this.paymentType).findFirst().get().getText());
+        payment.setPaymentType(services.stream().filter(o -> o.getId().intValue() == this.paymentType).findFirst().get().getName());
+        switch (payment.getPaymentType()) {
+            case "MOBILE":
+                payment.setOperator(Arrays.stream(MobileOperator.values()).filter(o -> o.getValue() == this.operator).findFirst().get().getText());
+                break;
+            case "INTERNET":
+                payment.setOperator(Arrays.stream(InternetOperator.values()).filter(o -> o.getValue() == this.operator).findFirst().get().getText());
+                break;
+            default:
+                payment.setOperator("NONE");
+                break;
+        }
         payment.setNumber(this.number);
         payment.setMoney(money);
-        payment.setPaymentStatus(this.paymentStatus == null ? null : Arrays.stream(PaymentStatus.values()).filter(o->o.getValue()==this.getPaymentStatus()).findFirst().get().getText());
+        payment.setPaymentStatus(this.paymentStatus == null ? null : Arrays.stream(PaymentStatus.values()).filter(o -> o.getValue() == this.getPaymentStatus()).findFirst().get().getText());
         payment.setCause(this.cause == null ? null : this.cause);
         payment.setCreated(this.created == null ? null : new Date());
         payment.setInvoice(Invoice.invoiceBuilder.setId(this.invoiceId).build());
@@ -64,6 +86,14 @@ public class PaymentViewModel {
     }
 
     public PaymentViewModel() {
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -90,11 +120,11 @@ public class PaymentViewModel {
         this.paymentType = paymentType;
     }
 
-    public String  getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(String  number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

@@ -6,7 +6,8 @@ package domain.entity.payment;
 public enum MobileOperator {
     VELCOM(0, "VELCOM"),
     LIFE(1, "LIFE"),
-    MTC(2, "MTC");
+    MTC(2, "MTC"),
+    DIALOG(3, "DIALOG");
 
     private final int value;
     private final String text;

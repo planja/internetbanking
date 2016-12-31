@@ -18,6 +18,7 @@
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <tag:kendo></tag:kendo>
     <script src="<c:url value="/resources/js/payment/datasource.payments.js" />"></script>
+    <script src="<c:url value="/resources/js/user/datasource.users.js" />"></script>
     <script src="<c:url value="/resources/js/payment/payment.js" />"></script>
     <script src="<c:url value="http://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.js" />"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -96,7 +97,7 @@
             </div>
             <div id="for_internet">
                 <br>
-                <label for="internet">Contract numberr</label>
+                <label for="internet">Contract number</label>
 
                 <input id="internet"
                        data-role="numerictextbox"
@@ -118,7 +119,18 @@
                         required validationMessage="Select internet operator"
                         ></select>
             </div>
-            <br><br>
+            <div id="for_other">
+                <br>
+                <label for="other_number">Contract number</label>
+                <input type="text"
+                       name="Contract number"
+                       class="k-input k-textbox"
+                       id="other_number"
+                       data-bind="value: number"
+                       maxlength="100"
+                       required/>
+            </div>
+            <br>
             <label for="invoice">Invoice</label>
             <select id="invoice"
                     required
@@ -143,6 +155,7 @@
 
         </div>
 
+        <br>
         <div id="for_edit">
             <label for="payment_status">Payment status</label>
             <select id="payment_status"

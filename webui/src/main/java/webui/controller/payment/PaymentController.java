@@ -1,16 +1,18 @@
 package webui.controller.payment;
 
 import domain.entity.payment.*;
+import domain.entity.services.Service;
 import domain.entity.user.User;
+import infrastructure.service.invoice.IInvoiceService;
 import infrastructure.service.payment.IPaymentService;
+import infrastructure.service.service.IServiceService;
 import infrastructure.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import webui.viewmodel.common.InfoViewModel;
 import webui.viewmodel.payment.PaymentViewModel;
 
@@ -33,6 +35,12 @@ public class PaymentController {
     @Autowired
     private IPaymentService paymentService;
 
+    @Autowired
+    private IServiceService serviceService;
+
+    @Autowired
+    private IInvoiceService invoiceService;
+
     @RequestMapping(value = {"/payment"}, method = RequestMethod.GET)
     public String payments() {
         return "payment/paymentPage";
@@ -44,8 +52,13 @@ public class PaymentController {
     @ResponseBody
     List<InfoViewModel> getUserInvoicesInfo(Principal principal) {
         User user = userService.findByUserName(principal.getName());
-        return user.getInvoices()
-                .stream().map(o -> new InfoViewModel(String.valueOf(o.getNumber()), o.getId().intValue())).collect(Collectors.toList());
+        if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
+                || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
+            return invoiceService.findAll().stream().map(o -> new InfoViewModel(o.getNumber().toString(), o.getId().intValue())).collect(Collectors.toList());
+        } else {
+            return user.getInvoices()
+                    .stream().map(o -> new InfoViewModel(String.valueOf(o.getNumber()), o.getId().intValue())).collect(Collectors.toList());
+        }
     }
 
     @RequestMapping(value = "/getPaymentTypesInfo", method = RequestMethod.GET,
@@ -53,7 +66,7 @@ public class PaymentController {
     public
     @ResponseBody
     List<InfoViewModel> getPaymentTypesInfo() {
-        return Arrays.stream(PaymentType.values()).map(o -> new InfoViewModel(o.getText(), o.getValue())).collect(Collectors.toList());
+        return serviceService.findAll().stream().map(o -> new InfoViewModel(o.getName(), o.getId().intValue())).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/getMobileOperatorsInfo", method = RequestMethod.GET,
@@ -86,17 +99,18 @@ public class PaymentController {
     @ResponseBody
     List<PaymentViewModel> getPayments(Principal principal) {
         User user = userService.findByUserName(principal.getName());
+        List<Service> services = serviceService.findAll();
         List<Payment> payments = paymentService.findPayments();
-        List<PaymentViewModel> result = new ArrayList<>();
+        List<PaymentViewModel> result;
         List<Payment> addedPayments = payments.stream().filter(payment -> Objects.equals(payment.getPaymentStatus(), "SUCCESSFUL") && Objects.equals(payment.getUser().getId(), user.getId())).collect(Collectors.toList());
         if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
                 || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
-            result = payments.stream().map(PaymentViewModel::new).collect(Collectors.toList());
+            result = payments.stream().map(o -> new PaymentViewModel(o, services)).collect(Collectors.toList());
             result = result.stream().filter(o -> o.getPaymentStatus() != 3).collect(Collectors.toList());
-            result.addAll(addedPayments.stream().map(PaymentViewModel::new).collect(Collectors.toList()));
+            result.addAll(addedPayments.stream().map(o -> new PaymentViewModel(o, services)).collect(Collectors.toList()));
             return result;
         } else {
-            return user.getPayments().stream().map(PaymentViewModel::new).collect(Collectors.toList());
+            return user.getPayments().stream().map(o -> new PaymentViewModel(o, services)).collect(Collectors.toList());
         }
 
     }
@@ -110,7 +124,8 @@ public class PaymentController {
     @ResponseBody
     PaymentViewModel savePayment(@RequestBody PaymentViewModel paymentViewModel, Principal principal) {
         User user = userService.findByUserName(principal.getName());
-        return new PaymentViewModel(paymentService.savePayment(paymentViewModel.toPayment(), user));
+        List<Service> services = serviceService.findAll();
+        return new PaymentViewModel(paymentService.savePayment(paymentViewModel.toPayment(services), user), services);
     }
 
     @RequestMapping(value = "/updatePayment",
@@ -122,7 +137,15 @@ public class PaymentController {
     @ResponseBody
     PaymentViewModel updatePayment(@RequestBody PaymentViewModel paymentViewModel, Principal principal) {
         User user = userService.findByUserName(principal.getName());
-        return new PaymentViewModel(paymentService.updatePayment(paymentViewModel.toPayment(), user));
+        List<Service> services = serviceService.findAll();
+        return new PaymentViewModel(paymentService.updatePayment(paymentViewModel.toPayment(services), user), services);
+    }
+
+    @RequestMapping(value = "/deletePayment/{id}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        paymentService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

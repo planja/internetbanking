@@ -89,8 +89,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ).access("hasRole('ROLE_ADMIN')");
 
         http.authorizeRequests().antMatchers(
-                "/updatePayment",
-                "/updateTransfer",
                 "/invoice",
                 "/getUserInvoicesForNonUser",
                 "/updateInvoiceForNonUser",
