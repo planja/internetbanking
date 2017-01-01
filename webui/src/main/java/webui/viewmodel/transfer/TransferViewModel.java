@@ -32,6 +32,8 @@ public class TransferViewModel {
 
     private String cause;
 
+    private Long userId;
+
     public TransferViewModel() {
     }
 
@@ -60,8 +62,17 @@ public class TransferViewModel {
         this.created = transfer.getCreated();
         this.invoiceId = transfer.getInvoice().getId();
         this.cause = transfer.getCause();
+        this.userId = transfer.getUser() != null ? transfer.getUser().getId() : null;
     }
 
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Long getId() {
         return id;

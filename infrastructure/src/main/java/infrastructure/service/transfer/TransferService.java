@@ -29,14 +29,18 @@ public class TransferService implements ITransferService {
     @Autowired
     private IInvoiceRepository invoiceRepository;
 
-    @Autowired
-    private IUserService userService;
 
     @Override
     public Transfer saveTransfer(Transfer transfer, User user) {
         transfer.setUser(user);
-        transfer.setInvoice(user.getInvoices().stream()
-                .filter(o -> Objects.equals(o.getId(), transfer.getInvoice().getId())).findFirst().get());
+        if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
+                || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
+            transfer.setInvoice(invoiceRepository.findAll().stream()
+                    .filter(o -> Objects.equals(o.getId(), transfer.getInvoice().getId())).findFirst().get());
+        } else {
+            transfer.setInvoice(user.getInvoices().stream()
+                    .filter(o -> Objects.equals(o.getId(), transfer.getInvoice().getId())).findFirst().get());
+        }
         transfer.setCreated(new Date());
         transfer.setStatus(PaymentStatus.ACCEPT.getText());
         return transferRepository.save(transfer);
@@ -45,8 +49,14 @@ public class TransferService implements ITransferService {
     @Override
     public Transfer updateTransfer(Transfer transfer, User user) {
         Transfer find = transferRepository.findOne(transfer.getId());
+        find.setMoney(transfer.getMoney());
+        find.setBankNumber(transfer.getBankNumber());
+        find.setBillNumber(transfer.getBillNumber());
+        find.setReceiverFullName(transfer.getReceiverFullName());
+        find.setStatus(transfer.getStatus());
         Invoice invoice = invoiceRepository.findOne(transfer.getInvoice().getId());
-        if (invoice.getMoney() < transfer.getMoney()) {
+        find.setInvoice(invoice);
+        if (invoice.getMoney() < transfer.getMoney() && !transfer.getStatus().equals("ACCEPT")) {
             find.setCause("Not enough money");
             find.setStatus("QUEUE");
         } else if (transfer.getStatus().equals("SUCCESSFUL")) {

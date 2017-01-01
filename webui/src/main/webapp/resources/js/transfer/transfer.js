@@ -5,10 +5,13 @@
 
 var invoicesDataSource = dsPayments.getInvoicesDataSource();
 var paymentStatusDataSource = dsPayments.getPaymentStatusDataSource();
+var usersDataSource = dsUsers.getUsersDataSource();
+
 
 $(document).ready(function () {
     invoicesDataSource.read();
     paymentStatusDataSource.read();
+    usersDataSource.read();
 
 
     var dataSource = new kendo.data.DataSource(
@@ -29,6 +32,14 @@ $(document).ready(function () {
                 update: {
                     url: "/updateTransfer",
                     type: "Put",
+                    dataType: "json",
+                    contentType: "application/json"
+                },
+                destroy: {
+                    url: function (options) {
+                        return "/deleteTransfer/" + options.id;
+                    },
+                    type: "Delete",
                     dataType: "json",
                     contentType: "application/json"
                 },
@@ -69,10 +80,17 @@ $(document).ready(function () {
                                     return true;
                                 }
                             }
-                        },
+                        }
                     }
                 }
-            }
+            },
+            requestEnd: function (e) {
+                var type = e.type;
+                if (type != "read") {
+                    $("#grid-transfers").data('kendoGrid').dataSource.read();
+                }
+            },
+            pageSize: 5
         }
     );
 
@@ -82,6 +100,22 @@ $(document).ready(function () {
             excel: {
                 fileName: "transfers.xlsx",
                 allPages: true
+            },
+            filterable: {
+                mode: "row"
+            },
+            scrollable: true,
+            resizable: true,
+            pageable: {
+                refresh: false,
+                pageSize: 5,
+                pageSizes: [5, 50, 100, 200, 500],
+                messages: {
+                    itemsPerPage: "transfers",
+                    display: "{0}-{1} from {2} transfers",
+                    empty: "No data",
+                    allPages: "Show All"
+                }
             },
             excelExport: function (e) {
                 var sheet = e.workbook.sheets[0];
@@ -95,52 +129,86 @@ $(document).ready(function () {
             width: 600,
             height: 400,
             dataSource: dataSource,
-            filterable: true,
             columns: [
                 {
+                    filterable: false,
                     field: "bankNumber",
                     title: "Bank number",
                     width: 100
                 },
                 {
+                    filterable: false,
                     field: "billNumber",
                     title: "Bill number",
-                    width: 100
+                    width: 90
                 },
                 {
+                    filterable: false,
                     field: "receiverFullName",
                     title: "Receiver",
                     width: 100
                 },
                 {
+                    filterable: false,
                     field: "money",
                     title: "Money",
                     template: function (dataItem) {
                         return dataItem.money + "$";
 
                     },
-                    width: 100
+                    width: 70
                 },
                 {
                     field: "status",
-                    title: "Status",
+                    title: "Transfer status",
                     template: function (dataItem) {
                         return getValue(dataItem.status, paymentStatusDataSource.data());
                     },
-                    width: 100
-                },
-                {
-                    field: "created",
-                    title: "Date time",
-                    format: "{0:dd.MM.yyyy HH:mm}",
-                    width: 100
+                    groupHeaderTemplate: function (dataItem) {
+                        return getValue(dataItem.value, paymentStatusDataSource.data());
+                    },
+                    filterable: {
+                        cell: {
+                            showOperators: false,
+                            template: function (container) {
+                                getPaymentStatusDropDawnEditor(container, paymentStatusDataSource.data());
+                            }
+                        }
+                    },
+                    width: 120
                 },
                 {
                     hidden: isUser,
+                    field: "userId",
+                    title: "User",
+                    template: function (dataItem) {
+                        return getValue(dataItem.userId, usersDataSource.data());
+                    },
+                    groupHeaderTemplate: function (dataItem) {
+                        return getValue(dataItem.value, usersDataSource.data());
+                    },
+                    filterable: {
+                        cell: {
+                            showOperators: false,
+                            template: function (container) {
+                                var data = usersDataSource.data();
+                                data.sort(function (a, b) {
+                                    var textA = a.text.toUpperCase();
+                                    var textB = b.text.toUpperCase();
+                                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                                });
+                                getUserDropDawnEditor(container, data);
+                            }
+                        }
+                    },
+                    width: 120
+                },
+                {
                     command: [
-                        {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}}
+                        {name: "edit", text: {edit: "Edit", update: "Save", cancel: "Cancel"}},
+                        {name: "destroy", text: "Delete"}
                     ],
-                    width: 70
+                    width: 90
                 }
             ],
             editable: {
@@ -160,21 +228,54 @@ $(document).ready(function () {
                 }
                 if (remove != null)
                     invoicesDataSource.remove(remove);
+
+
+                if (isUser) {
+                    $("#for_save").css("display", "");
+                    $("#for_edit").css("display", "none");
+                } else {
+                    $("#for_edit").css("display", "");
+                }
                 e.model.dirty = true;
+
+
                 if (e.model.id == null) {
                     $("#for_edit").css("display", "none");
                     $("#for_save").css("display", "");
                 } else {
-                    $("#for_edit").css("display", "");
-                    $("#for_save").css("display", "none");
-                    invoicesDataSource.add({
-                        id: -1,
-                        text: "-1"
+                    var result = $.grep(invoicesDataSource.data(), function (k) {
+                        return k.id == e.model.invoiceId;
                     });
-                    $("#invoice").data("kendoDropDownList").select(1)
+                    if (result.length == 0) {
+                        invoicesDataSource.add({
+                            id: -1,
+                            text: "Other invoice"
+                        });
+                        $("#invoice").data("kendoDropDownList").select(function (dataItem) {
+                            return dataItem.text === "Other invoice";
+                        });
+                    }
+                    if (!isUser)
+                        $("#for_edit").css("display", "");
 
                 }
             }
+            ,
+            dataBound: function () {
+                var grid = this;
+                var model;
+                grid.tbody.find("tr[role='row']").each(function () {
+                    $(this).find(".k-grid-delete").show();
+                    $(this).find(".k-grid-edit").show();
+                });
+
+                grid.tbody.find("tr[role='row']").each(function () {
+                    model = grid.dataItem(this);
+                    if (model.status == 3) {
+                        $(this).find(".k-grid-edit").hide();
+                    }
+                });
+            },
         }
     );
 
@@ -189,7 +290,26 @@ $(document).ready(function () {
         }
     }).data("kendoTooltip");
 
-});
+})
+;
+
+function getPaymentStatusDropDawnEditor(container, dataSource) {
+    getDropDownListFilter(container, dataSource, "id", "text", "Select status");
+}
+
+function getUserDropDawnEditor(container, dataSource) {
+    getDropDownListFilter(container, dataSource, "id", "text", "Select user");
+}
+
+function getDropDownListFilter(container, dataSource, dataValueField, dataTextField, optionLabel) {
+    container.element.width(135).kendoDropDownList({
+        dataTextField: dataTextField,
+        dataValueField: dataValueField,
+        valuePrimitive: true,
+        optionLabel: optionLabel,
+        dataSource: dataSource
+    });
+}
 
 function getValue(ids, data) {
     return findInDataSourcePropertyByValue(data, 'id', ids, 'text');

@@ -17,11 +17,12 @@
     </c:if>
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <tag:kendo></tag:kendo>
+    <script src="<c:url value="/resources/js/user/datasource.users.js" />"></script>
     <script src="<c:url value="/resources/js/payment/datasource.payments.js" />"></script>
     <script src="<c:url value="/resources/js/transfer/transfer.js" />"></script>
     <script src="<c:url value="http://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.js" />"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-    <title>Payments</title>
+    <title>Transfers</title>
 </head>
 <body>
 <div id="container">
@@ -58,14 +59,14 @@
             <input id="bankNumber" data-role="numerictextbox"
                    data-format="n0"
                    data-min="1"
-                   data-max="300000000"
+                   data-max="30000000000"
                    data-bind="value: bankNumber"/>
             <br><br>
             <label for="billNumber">Bill number</label>
             <input id="billNumber" data-role="numerictextbox"
                    data-format="n0"
                    data-min="1"
-                   data-max="300000000"
+                   data-max="300000000000"
                    data-bind="value: billNumber"/>
             <br><br>
             <label for="receiverFullName">Receiver name</label>
@@ -97,6 +98,7 @@
                     ></select>
         </div>
 
+        <br>
         <div id="for_edit">
             <label for="payment_status">Transfer status</label>
             <select id="payment_status"

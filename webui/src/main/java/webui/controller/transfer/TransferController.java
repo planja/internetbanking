@@ -5,12 +5,11 @@ import domain.entity.user.User;
 import infrastructure.service.transfer.ITransferService;
 import infrastructure.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import webui.viewmodel.payment.PaymentViewModel;
 import webui.viewmodel.transfer.TransferViewModel;
 
@@ -50,7 +49,7 @@ public class TransferController {
         if (user.getRoles().stream().filter(o -> o.getRoleName().equals("OPERATOR")).findFirst().isPresent()
                 || user.getRoles().stream().filter(o -> o.getRoleName().equals("ADMIN")).findFirst().isPresent()) {
             result = transfers.stream().map(TransferViewModel::new).collect(Collectors.toList());
-            result=result.stream().filter(o->o.getStatus()!=3).collect(Collectors.toList());
+            result = result.stream().filter(o -> o.getStatus() != 3).collect(Collectors.toList());
             result.addAll(addedTransfers.stream().map(TransferViewModel::new).collect(Collectors.toList()));
             return result;
         } else {
@@ -80,6 +79,13 @@ public class TransferController {
     TransferViewModel updateTransfer(@RequestBody TransferViewModel transferViewModel, Principal principal) {
         User user = userService.findByUserName(principal.getName());
         return new TransferViewModel(transferService.updateTransfer(transferViewModel.toTransfer(), user));
+    }
+
+    @RequestMapping(value = "/deleteTransfer/{id}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        transferService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
