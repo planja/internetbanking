@@ -124,6 +124,8 @@ $(document).ready(function () {
                     var row = sheet.rows[rowIndex];
                     row.cells[3].value = row.cells[3].value + " $";
                     row.cells[4].value = getValue(row.cells[4].value, paymentStatusDataSource.data());
+                    if (row.cells.length != 5)
+                        row.cells[5].value = getValue(row.cells[5].value, usersDataSource.data());
                 }
             },
             width: 600,

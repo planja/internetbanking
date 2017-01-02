@@ -84,7 +84,7 @@ $(document).ready(function () {
                     }
                 }
             },
-            pageSize:5
+            pageSize: 5
         }
     );
 
@@ -112,14 +112,19 @@ $(document).ready(function () {
 
                 for (var rowIndex = 1; rowIndex < sheet.rows.length; rowIndex++) {
                     var row = sheet.rows[rowIndex];
-                    if (row.cells[0].value == 0) {
+                    if (row.cells[0].value == 1) {
                         row.cells[1].value = getValue(row.cells[1].value, mobileOperatorsDataSource.data());
-                    } else {
+                    } else if (row.cells[0].value == 2) {
                         row.cells[1].value = getValue(row.cells[1].value, internetOperatorsDataSource.data());
+                    } else {
+                        row.cells[1].value = "NONE";
                     }
                     row.cells[0].value = getValue(row.cells[0].value, paymentTypesDataSource.data());
                     row.cells[3].value = row.cells[3].value + " $";
                     row.cells[4].value = getValue(row.cells[4].value, paymentStatusDataSource.data());
+                    if (row.cells.length != 5)
+                        row.cells[5].value = getValue(row.cells[5].value, usersDataSource.data());
+
                 }
             },
             width: 600,
@@ -287,13 +292,15 @@ $(document).ready(function () {
                     $("#for_edit").css("display", "none");
                     $("#for_save").css("display", "");
                 } else {
-                    var result = $.grep(invoicesDataSource.data(), function(k){ return k.id == e.model.invoiceId; });
-                    if(result.length==0){
+                    var result = $.grep(invoicesDataSource.data(), function (k) {
+                        return k.id == e.model.invoiceId;
+                    });
+                    if (result.length == 0) {
                         invoicesDataSource.add({
                             id: -1,
                             text: "Other invoice"
                         });
-                        $("#invoice").data("kendoDropDownList").select(function(dataItem) {
+                        $("#invoice").data("kendoDropDownList").select(function (dataItem) {
                             return dataItem.text === "Other invoice";
                         });
                     }

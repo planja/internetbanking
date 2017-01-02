@@ -17,10 +17,11 @@
     </c:if>
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <tag:kendo></tag:kendo>
+    <script src="<c:url value="/resources/js/jszip.js" />"></script>
     <script src="<c:url value="/resources/js/user/datasource.users.js" />"></script>
     <script src="<c:url value="/resources/js/payment/datasource.payments.js" />"></script>
     <script src="<c:url value="/resources/js/transfer/transfer.js" />"></script>
-    <script src="<c:url value="http://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.js" />"></script>
+
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <title>Transfers</title>
 </head>
