@@ -6,11 +6,16 @@ import infrastructure.repository.*;
 import infrastructure.service.payment.IPaymentService;
 import infrastructure.service.transfer.ITransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,11 +62,17 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     @Transactional
     public User updateUser(User user) throws Exception {
-        Optional<User> userFromDataBase = userRepository.findAll().stream().filter(o -> Objects.equals(o.getUserName(), user.getUserName())).findFirst();
+        final User finalUser = user;
+        Optional<User> userFromDataBase = userRepository.findAll().stream().filter(o -> Objects.equals(o.getUserName(), finalUser.getUserName())).findFirst();
         if (userFromDataBase.isPresent() && !Objects.equals(user.getUserName(), userFromDataBase.get().getUserName()))
             throw new Exception("User with current user name already exist. " + "<a href=\"/userInfo\">Try again</a>");
-        user.setRoles(userFromDataBase.get().getRoles());
-        return userRepository.save(user);
+        User find = userRepository.findOne(user.getId());
+        user.setRoles(find.getRoles());
+        user = userRepository.save(user);
+        UserDetails userDetails = this.loadUserByUsername(user.getUserName());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                userDetails, user.getUserPassword(), userDetails.getAuthorities()));
+        return user;
     }
 
     @Override
