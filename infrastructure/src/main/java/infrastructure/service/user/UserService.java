@@ -97,8 +97,13 @@ public class UserService implements UserDetailsService, IUserService {
         find.setPassportNumber(user.getPassportNumber());
         find.setIssuedPassport(user.getIssuedPassport());
         find.setRoles(user.getRoles());
-        find.getRoles().forEach(o -> o.setUser(find));
-        return userRepository.save(find);
+        final User finalFind = find;
+        find.getRoles().forEach(o -> o.setUser(finalFind));
+        find = userRepository.save(find);
+        UserDetails userDetails = this.loadUserByUsername(user.getUserName());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                userDetails, user.getUserPassword(), userDetails.getAuthorities()));
+        return find;
     }
 
     @Override
